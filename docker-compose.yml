@@ -1,0 +1,37 @@
+services:
+  diploma-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: diploma-generator
+    working_dir: /app
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - ./output:/app/output
+      - ./assets:/app/assets
+      - ./public:/app/public
+    environment:
+      - HOME=${HOME}
+      - UNO_PATH=${UNO_PATH}
+      - PYTHONUNBUFFERED=${PYTHONUNBUFFERED}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - API_HOST=${API_HOST}
+      - API_PORT=${API_PORT}
+      - DEBUG=${DEBUG}
+    command: >
+      bash -c "
+        cp /app/assets/diploma.xlsx /app/ &&
+        cp /app/assets/diploma-addition.xlsx /app/ &&
+        python /app/app/api/run_api.py
+      "
+    networks:
+      - wds-dev
+
+networks:
+  wds-dev:
+    external: true
